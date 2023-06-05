@@ -8,6 +8,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
@@ -40,6 +41,7 @@ object ApiModule {
         .addConverterFactory(GsonConverterFactory.create())
         .baseUrl("https://www.themealdb.com/api/json/v1/1/")
         .client(okHttpClient)
+        .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .build()
 
     @Singleton

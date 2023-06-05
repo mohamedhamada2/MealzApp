@@ -5,19 +5,24 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.bumptech.glide.Glide
 import com.example.domain.entity.Category
 import com.example.mealzapp.databinding.CategoryItemBinding
 
-class MealsAdapter() : ListAdapter<Category, MealsAdapter.ViewHolder>(CategoryDiffCallback()) {
+class MealsAdapter(val categoryList: List<Category>) : Adapter<MealsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemBinding = CategoryItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(itemBinding)
     }
 
+    override fun getItemCount(): Int {
+       return categoryList.size
+    }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(categoryList[position])
     }
 
     class ViewHolder(private val itemBinding: CategoryItemBinding) : RecyclerView.ViewHolder(itemBinding.root) {
@@ -28,7 +33,7 @@ class MealsAdapter() : ListAdapter<Category, MealsAdapter.ViewHolder>(CategoryDi
         }
     }
 
-    class CategoryDiffCallback : DiffUtil.ItemCallback<Category>() {
+    /*class CategoryDiffCallback : DiffUtil.ItemCallback<Category>() {
         override fun areItemsTheSame(
             oldItem: Category,
             newItem: Category
@@ -42,5 +47,5 @@ class MealsAdapter() : ListAdapter<Category, MealsAdapter.ViewHolder>(CategoryDi
         ): Boolean {
             return oldItem == newItem
         }
-    }
+    }*/
 }
