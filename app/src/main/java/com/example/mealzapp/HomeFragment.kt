@@ -1,6 +1,7 @@
 package com.example.mealzapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,19 +11,16 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.domain.entity.Category
+import com.example.domain.entity.CategoryResponse
 import com.example.mealzapp.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
     lateinit var fragmentHomeBinding: FragmentHomeBinding
-    lateinit var navController: NavController
     private val mealsViewModel:MealsViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,15 +29,22 @@ class HomeFragment : Fragment() {
         // Inflate the layout for this fragment
         fragmentHomeBinding = FragmentHomeBinding.inflate(inflater, container, false)
         mealsViewModel.get_meals()
-        val mealsAdapter = MealsAdapter()
-        val layoutManager = LinearLayoutManager(requireContext())
         lifecycleScope.launch {
-            mealsViewModel.categories.collect{
-                mealsAdapter.submitList(it?.categories)
-                fragmentHomeBinding.mealsRv.adapter = mealsAdapter
-                fragmentHomeBinding.mealsRv.layoutManager = layoutManager
+            try {
+                mealsViewModel.mutableLiveData.observe(viewLifecycleOwner){
+                    getcategories(it)
+                }
+            }catch (e:Exception){
+               Log.e("e",e.message.toString())
             }
         }
         return fragmentHomeBinding.root
+    }
+
+    private fun getcategories(categoryResponse : CategoryResponse?) {
+        val mealsAdapter = MealsAdapter(categoryList = categoryResponse!!.categories)
+        val layoutManager = LinearLayoutManager(requireContext())
+        fragmentHomeBinding.mealsRv.layoutManager = layoutManager
+        fragmentHomeBinding.mealsRv.adapter = mealsAdapter
     }
 }
